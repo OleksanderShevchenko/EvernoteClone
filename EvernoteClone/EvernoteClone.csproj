@@ -13,10 +13,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <None Remove="app_config.json" />
-  </ItemGroup>
-
-  <ItemGroup>
     <Content Include="AssemblyInfo.cs">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
@@ -24,6 +20,12 @@
 
   <ItemGroup>
     <PackageReference Include="sqlite-net-pcl" Version="1.9.172" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Update="app_config.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
   </ItemGroup>
 
 </Project>
