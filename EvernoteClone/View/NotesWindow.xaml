@@ -25,11 +25,16 @@
                           Command="{Binding ExitCommand}"/>
             </MenuItem>
         </Menu>
+        <StatusBar DockPanel.Dock="Bottom">
+            <StatusBarItem>
+                <TextBlock x:Name="statusTextBlick" />
+            </StatusBarItem>
+        </StatusBar>
         <ListView DockPanel.Dock="Left"
                   x:Name="lstNotebooks"
                   Width="140"
                   ItemsSource="{Binding Notebooks}"
-                  SelectedValue="{Binding SelectedNotebook, Mode=TwoWay}">
+                  SelectedValue="{Binding SelectedNotebook, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}">
             <ListView.ItemTemplate>
                 <DataTemplate>
                     <TextBlock Text="{Binding Name}" />
@@ -52,9 +57,21 @@
                         x:Name="btnSpeech"
                         Command="{Binding SpeechCommand}"
                         />
-               
+                <ToggleButton Content="B"
+                              x:Name="btnBold"
+                              Command="{Binding BoldCommand}"
+                              Click="btnBold_Click"/>
             </ToolBar>
         </ToolBarTray>
-        <Grid/>
+        <Grid>
+            <RichTextBox x:Name="rtbNoteContent"
+                         Margin="5"
+                         VerticalScrollBarVisibility="Auto"
+                         HorizontalScrollBarVisibility="Auto"
+                         TextChanged="rtbNoteContent_TextChanged">
+               
+            </RichTextBox>
+        </Grid>
+        
     </DockPanel>
 </Window>

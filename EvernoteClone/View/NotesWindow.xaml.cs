@@ -24,5 +24,22 @@ namespace EvernoteClone.View
 			InitializeComponent();
 		}
 
-    }
+		private void rtbNoteContent_TextChanged(object sender, TextChangedEventArgs e)
+		{
+			int wordCount = new TextRange(rtbNoteContent.Document.ContentStart, rtbNoteContent.Document.ContentEnd).Text.Length;
+			statusTextBlick.Text = $"Document length: {wordCount} characters";
+		}
+
+		private void btnBold_Click(object sender, RoutedEventArgs e)
+		{
+			if (btnBold.IsChecked == true)
+			{
+				rtbNoteContent.Selection.ApplyPropertyValue(Inline.FontWeightProperty, FontWeights.Bold);
+			}
+			else
+			{
+				rtbNoteContent.Selection.ApplyPropertyValue(Inline.FontWeightProperty, FontWeights.Normal);
+			}
+		}
+	}
 }
