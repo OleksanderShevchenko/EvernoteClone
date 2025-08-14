@@ -4,9 +4,57 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:EvernoteClone.View"
+        xmlns:vm="clr-namespace:EvernoteClone.ViewModel"
         mc:Ignorable="d"
         Title="NotesWindow" Height="450" Width="800">
-    <Grid>
-        
-    </Grid>
+    <Window.Resources>
+        <vm:NotesVM x:Key="vm"/>
+    </Window.Resources>
+    <DockPanel DataContext="{StaticResource vm}">
+        <Menu DockPanel.Dock="Top">
+            <MenuItem Header="_File">
+                <MenuItem Header="New Note_Book" 
+                          Command="{Binding NewNotebookCommand}"/>
+                <MenuItem Header="_New Note" 
+                          Command="{Binding NewNoteCommand}"
+                          CommandParameter="{Binding SelectedNotebook}"/>
+                <MenuItem Header="_Save NoteBook" />
+                <MenuItem Header="Save Note" />
+                <Separator />
+                <MenuItem Header="_Exit" 
+                          Command="{Binding ExitCommand}"/>
+            </MenuItem>
+        </Menu>
+        <ListView DockPanel.Dock="Left"
+                  x:Name="lstNotebooks"
+                  Width="140"
+                  ItemsSource="{Binding Notebooks}"
+                  SelectedValue="{Binding SelectedNotebook, Mode=TwoWay}">
+            <ListView.ItemTemplate>
+                <DataTemplate>
+                    <TextBlock Text="{Binding Name}" />
+                </DataTemplate>
+            </ListView.ItemTemplate>
+        </ListView>
+        <ListView DockPanel.Dock="Left"
+                  x:Name="lstNotes"
+                  ItemsSource="{Binding Notes}"
+                  Width="140">
+            <ListView.ItemTemplate>
+                <DataTemplate>
+                    <TextBlock Text="{Binding Title}" />
+                </DataTemplate>
+            </ListView.ItemTemplate>
+        </ListView>
+        <ToolBarTray DockPanel.Dock="Top">
+            <ToolBar>
+                <Button Content="Speech"
+                        x:Name="btnSpeech"
+                        Command="{Binding SpeechCommand}"
+                        />
+               
+            </ToolBar>
+        </ToolBarTray>
+        <Grid/>
+    </DockPanel>
 </Window>

@@ -23,5 +23,6 @@ namespace EvernoteClone.View
 		{
 			InitializeComponent();
 		}
-	}
+
+    }
 }
