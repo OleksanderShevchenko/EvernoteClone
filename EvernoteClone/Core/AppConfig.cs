@@ -46,7 +46,7 @@ namespace EvernoteClone.Core
 			if (DesignerProperties.GetIsInDesignMode(new DependencyObject()))
 			{
 				// Provide mock config for designer
-				DbName = "";
+				DbName = "NotesDB.db3";  // use default name
 				return;
 			}
 
@@ -58,7 +58,8 @@ namespace EvernoteClone.Core
 
 				if (!File.Exists(configFilePath))
 				{
-					throw new FileNotFoundException("The configuration file 'app_config.json' was not found.", configFilePath);
+					DbName = "NotesDB.db3";  // use default name
+					return;
 				}
 
 				// Read the entire JSON file.
@@ -70,11 +71,11 @@ namespace EvernoteClone.Core
 				// Assign the values to the public properties.
 				DbName = configData?.dbName;
 				
-
 				// Validate that essential settings were loaded.
 				if (string.IsNullOrEmpty(DbName))
 				{
-					throw new InvalidOperationException("The 'DbName' setting is missing or empty in 'app_config.json'.");
+					DbName = "NotesDB.db3";  // use default name
+					return;
 				}
 			}
 			catch (Exception ex)
