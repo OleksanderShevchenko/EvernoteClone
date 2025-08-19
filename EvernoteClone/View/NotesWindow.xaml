@@ -7,10 +7,7 @@
         xmlns:vm="clr-namespace:EvernoteClone.ViewModel"
         mc:Ignorable="d"
         Title="NotesWindow" Height="450" Width="800">
-    <Window.Resources>
-        <vm:NotesVM x:Key="vm"/>
-    </Window.Resources>
-    <DockPanel DataContext="{StaticResource vm}">
+    <DockPanel>
         <Menu DockPanel.Dock="Top">
             <MenuItem Header="_File">
                 <MenuItem Header="New Note_Book" 
@@ -53,10 +50,15 @@
         </ListView>
         <ToolBarTray DockPanel.Dock="Top">
             <ToolBar>
-                <Button Content="Speech"
+                <ToggleButton Content="{Binding SpeechButtonText}"
                         x:Name="btnSpeech"
                         Command="{Binding SpeechCommand}"
                         />
+                <ComboBox x:Name="cbxLanguage"
+                          Width="100"
+                          ItemsSource="{Binding Languages}"
+                          SelectedItem="{Binding SelectedLanguage, Mode=TwoWay}"
+                          />
                 <ToggleButton Content="B"
                               x:Name="btnBold"
                               Command="{Binding BoldCommand}"
@@ -68,8 +70,8 @@
                          Margin="5"
                          VerticalScrollBarVisibility="Auto"
                          HorizontalScrollBarVisibility="Auto"
-                         TextChanged="rtbNoteContent_TextChanged">
-               
+                         TextChanged="rtbNoteContent_TextChanged"
+                         SelectionChanged="rtbNoteContent_SelectionChanged">
             </RichTextBox>
         </Grid>
         
