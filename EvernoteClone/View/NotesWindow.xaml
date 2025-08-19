@@ -61,8 +61,27 @@
                           />
                 <ToggleButton Content="B"
                               x:Name="btnBold"
-                              Command="{Binding BoldCommand}"
+                              FontWeight="Bold"
                               Click="btnBold_Click"/>
+                <ToggleButton Content="I"
+                              x:Name="btnItalic"
+                              FontStyle="Italic"
+                              Click="btnItalic_Click"/>
+                <ToggleButton x:Name="btnUnderlined"
+                              Click="btnUnderlined_Click">
+                    <TextBlock Text="U"
+                               TextDecorations="Underline"/>
+                </ToggleButton>
+                <ComboBox x:Name="fontFamilyComboBox"
+                          Width="100"
+                          SelectionChanged="fontFamilyComboBox_SelectionChanged"/>
+                <ComboBox x:Name="fontSizeComboBox"
+                          Width="50"
+                          IsEditable="True"
+                          TextBoxBase.TextChanged="fontSizeComboBox_TextChanged"/>
+                <Button Content="Save"
+                        x:Name="saveFileButton"
+                        Click="saveFileButton_Click"/>
             </ToolBar>
         </ToolBarTray>
         <Grid>
