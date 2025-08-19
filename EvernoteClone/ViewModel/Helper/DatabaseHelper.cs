@@ -15,7 +15,7 @@ namespace EvernoteClone.ViewModel.Helper
 		private static string dbName = AppConfig.Instance.DbName;
 		private static string dbFile = Path.Combine(Environment.CurrentDirectory, dbName);
 
-		public static bool Insert<T>(T item)
+		public static async Task<bool> Insert<T>(T item)
 		{
 			bool result = false;
 
@@ -31,7 +31,7 @@ namespace EvernoteClone.ViewModel.Helper
 			return result;
 		}
 
-		public static bool Update<T>(T item)
+		public static async Task<bool> Update<T>(T item)
 		{
 			bool result = false;
 
@@ -47,7 +47,7 @@ namespace EvernoteClone.ViewModel.Helper
 			return result;
 		}
 
-		public static bool Delete<T>(T item)
+		public static async Task<bool> Delete<T>(T item)
 		{
 			bool result = false;
 
@@ -63,7 +63,7 @@ namespace EvernoteClone.ViewModel.Helper
 			return result;
 		}
 
-		public static List<T> Read<T>() where T : new()
+		public static async Task<List<T>> Read<T>() where T : new()
 		{
 			List<T> result = new List<T>();
 
