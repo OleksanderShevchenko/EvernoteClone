@@ -70,6 +70,19 @@ namespace EvernoteClone.ViewModel
 				GetNotes(); // Fetch notes when a notebook is selected
 			}
 		}
+
+		private Note note;
+
+		public Note SelectedNote
+		{
+			get { return note; }
+			set
+			{
+				note = value;
+				SelectedNoteChanged(this, new EventArgs());
+			}
+		}
+
 		// Commands
 		public NewNotebookCommand NewNotebookCommand { get; set; }
 		public NewNoteCommand NewNoteCommand { get; set; }
@@ -77,6 +90,7 @@ namespace EvernoteClone.ViewModel
 		public SpeechCommand SpeechCommand { get; set; }
 
 		public event PropertyChangedEventHandler? PropertyChanged;
+		public event EventHandler SelectedNoteChanged;
 
 		protected virtual void OnPropertyChanged(string propertyName)
 		{
@@ -212,7 +226,7 @@ namespace EvernoteClone.ViewModel
 			});
 		}
 
-		public void CreateNote(int notebookID)
+		public async void CreateNote(int notebookID)
 		{
 			Note newNote = new Note()
 			{
@@ -223,11 +237,11 @@ namespace EvernoteClone.ViewModel
 				FileLocation = string.Empty // Set default file location or leave empty
 			};
 
-			DatabaseHelper.Insert(newNote);
+			await DatabaseHelper.Insert(newNote);
 			GetNotes(); // Refresh notes after adding a new one
 		}
 
-		public void CreateNoteBook(int _userID)
+		public async void CreateNoteBook(int _userID)
 		{
 			Notebook newNotebook = new Notebook()
 			{
@@ -236,14 +250,14 @@ namespace EvernoteClone.ViewModel
 				CreatedAt = DateTime.Now,
 				UpdatedAt = DateTime.Now
 			};
-			DatabaseHelper.Insert(newNotebook);
+			await DatabaseHelper.Insert(newNotebook);
 			GetNotebooks(); // Refresh notebooks after adding a new one
 		}
 
-		private void GetNotebooks()
+		private async void GetNotebooks()
 		{
 			Notebooks.Clear(); // Clear existing notebooks before loading new ones
-			var notebooks = DatabaseHelper.Read<Notebook>();
+			var notebooks = await DatabaseHelper.Read<Notebook>();
 			if (notebooks != null)
 			{
 				foreach (var notebook in notebooks)
@@ -253,14 +267,14 @@ namespace EvernoteClone.ViewModel
 			}
 		}
 
-		private void GetNotes()
+		private async void GetNotes()
 		{
 			Notes.Clear(); // Clear existing notes before loading new ones
 			if (selectedNotebook == null)
 			{
 				return; // No notebook selected, so no notes to retrieve
 			}
-			var notes = DatabaseHelper.Read<Note>().Where(n => n.NotebookId == selectedNotebook.Id).ToList();
+			var notes = (await DatabaseHelper.Read<Note>()).Where(n => n.NotebookId == selectedNotebook.Id).ToList();
 			if (notes != null)
 			{
 				foreach (var note in notes)
@@ -268,6 +282,11 @@ namespace EvernoteClone.ViewModel
 					Notes.Add(note);
 				}
 			}
+		}
+
+		public async void UpdateSelectedNote()
+		{
+			await DatabaseHelper.Update(SelectedNote);
 		}
 
 	}
