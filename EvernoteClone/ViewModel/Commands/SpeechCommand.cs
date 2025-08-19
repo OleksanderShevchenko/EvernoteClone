@@ -21,14 +21,13 @@ namespace EvernoteClone.ViewModel.Commands
 		}
 		public void Execute(object parameter)
 		{
-			// Logic to handle speech command execution
-			Console.WriteLine("Speech command executed.");
+			_notesVM.ToggleSpeechRecognition();
 		}
 		
 		private NotesVM _notesVM;
 		public SpeechCommand(NotesVM vm)
 		{
-			_notesVM = vm;
+			_notesVM  = vm;
 		}
 	}
 

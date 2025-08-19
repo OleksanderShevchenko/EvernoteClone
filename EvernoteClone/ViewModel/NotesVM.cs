@@ -1,7 +1,7 @@
 ﻿using EvernoteClone.Model;
 using EvernoteClone.ViewModel.Commands;
 using EvernoteClone.ViewModel.Helper;
-using System;
+using System.Speech.Recognition;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
@@ -9,13 +9,54 @@ using System.Linq;
 using System.Security.RightsManagement;
 using System.Text;
 using System.Threading.Tasks;
+using System.Globalization;
+using System.Windows;
 
 namespace EvernoteClone.ViewModel
 {
 	public class NotesVM: INotifyPropertyChanged
 	{
+		private SpeechRecognitionEngine _recognizer;
+		private bool _isListening;
+		private string _recognizedText;
+		private string _selectedLanguage;
 
+		public bool IsListening
+		{
+			get { return _isListening; }
+			set
+			{
+				_isListening = value;
+				OnPropertyChanged(nameof(IsListening));
+				OnPropertyChanged(nameof(SpeechButtonText));
+			}
+		}
+
+		public string SpeechButtonText => IsListening ? "Stop" : "Speech";
+
+		public string RecognizedText
+		{
+			get { return _recognizedText; }
+			set
+			{
+				_recognizedText = value;
+				OnPropertyChanged(nameof(RecognizedText));
+			}
+		}
+
+		public string SelectedLanguage
+		{
+			get { return _selectedLanguage; }
+			set
+			{
+				_selectedLanguage = value;
+				OnPropertyChanged(nameof(SelectedLanguage));
+			}
+		}
+		// collections
 		public ObservableCollection<Notebook> Notebooks { get; set; }
+		public ObservableCollection<string> Languages { get; set; }
+		public ObservableCollection<Note> Notes { get; set; }
 
 		private Notebook selectedNotebook;
 
@@ -29,8 +70,7 @@ namespace EvernoteClone.ViewModel
 				GetNotes(); // Fetch notes when a notebook is selected
 			}
 		}
-
-		public ObservableCollection<Note> Notes { get; set; }
+		// Commands
 		public NewNotebookCommand NewNotebookCommand { get; set; }
 		public NewNoteCommand NewNoteCommand { get; set; }
 		public ExitCommand ExitCommand { get; set; }
@@ -47,11 +87,129 @@ namespace EvernoteClone.ViewModel
 		{
 			Notebooks = new ObservableCollection<Notebook>();
 			Notes = new ObservableCollection<Note>();
+			Languages = new ObservableCollection<string>() { "English", "Ukrainian" };
+			SelectedLanguage = "English";
+			_recognizedText = string.Empty;
+
 			GetNotebooks(); // Load existing notebooks from the database
 			NewNotebookCommand = new NewNotebookCommand(this);
 			NewNoteCommand = new NewNoteCommand(this);
 			ExitCommand = new ExitCommand(this);
 			SpeechCommand = new SpeechCommand(this);
+			
+		}
+
+		// This method is called from the SpeechCommand
+		public void ToggleSpeechRecognition()
+		{
+			if (IsListening)
+			{
+				StopRecognition();
+			}
+			else
+			{
+				StartRecognition();
+			}
+		}
+
+		private void StartRecognition()
+		{
+			// Stop any existing recognizer first
+			StopRecognition();
+
+			try
+			{
+				CultureInfo culture;
+				string languageName;
+
+				if (SelectedLanguage == "English")
+				{
+					culture = new CultureInfo("en-US");
+					languageName = "English";
+				}
+				else // Assumes SelectedLanguage is "Ukrainian"
+				{
+					culture = new CultureInfo("uk-UA");
+					languageName = "Ukrainian";
+				}
+
+				// Check if the selected language recognizer is available
+				var installedRecognizers = SpeechRecognitionEngine.InstalledRecognizers();
+				bool recognizerFound = false;
+				foreach (var recognizerInfo in installedRecognizers)
+				{
+					if (recognizerInfo.Culture.Equals(culture))
+					{
+						recognizerFound = true;
+						break;
+					}
+				}
+
+				if (!recognizerFound)
+				{
+					MessageBox.Show(
+						$"The {languageName} speech recognition pack is not installed on this system. " +
+						"Please go to Windows Settings > Time & Language > Language & region to install it.",
+						"Speech Recognition Not Available",
+						MessageBoxButton.OK,
+						MessageBoxImage.Warning
+					);
+					return; // Exit the method gracefully
+				}
+
+				_recognizer = new SpeechRecognitionEngine(culture);
+
+				// Configure for dictation (free-form speech)
+				_recognizer.LoadGrammar(new DictationGrammar());
+
+				// Hook up the event handler
+				_recognizer.SpeechRecognized += Recognizer_SpeechRecognized;
+
+				// Set the microphone as input
+				_recognizer.SetInputToDefaultAudioDevice();
+
+				// Start listening asynchronously
+				_recognizer.RecognizeAsync(RecognizeMode.Multiple);
+
+				IsListening = true;
+				RecognizedText = string.Empty; // Clear previous text
+			}
+			catch (Exception ex)
+			{
+				// This catch block is for any other unforeseen errors
+				MessageBox.Show(
+					$"An unexpected error occurred: {ex.Message}",
+					"Speech Recognition Error",
+					MessageBoxButton.OK,
+					MessageBoxImage.Error
+				);
+				IsListening = false;
+				if (_recognizer != null)
+				{
+					_recognizer.Dispose();
+					_recognizer = null;
+				}
+			}
+		}
+
+		public void StopRecognition()
+		{
+			if (_recognizer != null)
+			{
+				_recognizer.RecognizeAsyncCancel();
+				_recognizer.Dispose();
+				_recognizer = null;
+			}
+			IsListening = false;
+		}
+
+		private void Recognizer_SpeechRecognized(object? sender, SpeechRecognizedEventArgs e)
+		{
+			// Use Dispatcher to ensure the UI update happens on the main thread
+			Application.Current.Dispatcher.Invoke(() =>
+			{
+				RecognizedText += e.Result.Text + " ";
+			});
 		}
 
 		public void CreateNote(int notebookID)
