@@ -1,5 +1,6 @@
 {
   "dbName": "NotesDB.db3",
   "mobileClient": "https://wpfevernote.azurewebsites.net",
+  "useAzure": true,
 }
 

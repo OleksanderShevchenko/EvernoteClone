@@ -33,6 +33,7 @@ namespace EvernoteClone.Core
 		/// </summary>
 		public string DbName { get; }
 		public string MobileClient { get; }
+		public bool UseAzureDB { get; } = true; // Default value if not specified in the config file
 
 		#endregion
 
@@ -73,6 +74,7 @@ namespace EvernoteClone.Core
 				// Assign the values to the public properties.
 				DbName = configData?.dbName;
 				MobileClient = configData?.mobileClient;
+				UseAzureDB = configData?.useAzureDB ?? true; // Use the value from the config or default to true
 				// Validate that essential settings were loaded.
 				if (string.IsNullOrEmpty(DbName))
 				{
@@ -100,6 +102,7 @@ namespace EvernoteClone.Core
 		{
 			public string dbName { get; set; }
 			public string mobileClient { get; set; }
+			public bool useAzureDB { get; set; } = true; // Default value if not specified
 		}
 	}
 }
