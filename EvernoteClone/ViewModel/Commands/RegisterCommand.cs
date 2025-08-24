@@ -16,8 +16,7 @@ namespace EvernoteClone.ViewModel.Commands
 		}
 		public void Execute(object parameter)
 		{
-			// Logic to execute when the command is invoked
-			Console.WriteLine("Register command executed.");
+			_logInVM.Register();
 		}
 
 		private LogInVM _logInVM;
