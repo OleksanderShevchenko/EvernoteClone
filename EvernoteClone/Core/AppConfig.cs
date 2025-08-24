@@ -32,7 +32,7 @@ namespace EvernoteClone.Core
 		/// Thedatabase location.
 		/// </summary>
 		public string DbName { get; }
-
+		public string MobileClient { get; }
 
 		#endregion
 
@@ -47,6 +47,7 @@ namespace EvernoteClone.Core
 			{
 				// Provide mock config for designer
 				DbName = "NotesDB.db3";  // use default name
+				MobileClient = "https://wpfevernote.azurewebsites.net";
 				return;
 			}
 
@@ -59,6 +60,7 @@ namespace EvernoteClone.Core
 				if (!File.Exists(configFilePath))
 				{
 					DbName = "NotesDB.db3";  // use default name
+					MobileClient = "https://wpfevernote.azurewebsites.net";
 					return;
 				}
 
@@ -70,12 +72,16 @@ namespace EvernoteClone.Core
 
 				// Assign the values to the public properties.
 				DbName = configData?.dbName;
-				
+				MobileClient = configData?.mobileClient;
 				// Validate that essential settings were loaded.
 				if (string.IsNullOrEmpty(DbName))
 				{
 					DbName = "NotesDB.db3";  // use default name
 					return;
+				}
+				if (string.IsNullOrEmpty(MobileClient))
+				{
+					MobileClient = "https://wpfevernote.azurewebsites.net"; // use default URL
 				}
 			}
 			catch (Exception ex)
@@ -93,6 +99,7 @@ namespace EvernoteClone.Core
 		private class AppSettingsData
 		{
 			public string dbName { get; set; }
+			public string mobileClient { get; set; }
 		}
 	}
 }
