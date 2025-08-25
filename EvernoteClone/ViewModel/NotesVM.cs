@@ -20,6 +20,13 @@ namespace EvernoteClone.ViewModel
 		private bool _isListening;
 		private string _recognizedText;
 		private string _selectedLanguage;
+		private bool _isEditing;
+
+		public bool IsEditing
+		{
+			get { return _isEditing; }
+			set { _isEditing = value; }
+		}
 
 		public bool IsListening
 		{
@@ -88,6 +95,9 @@ namespace EvernoteClone.ViewModel
 		public NewNoteCommand NewNoteCommand { get; set; }
 		public ExitCommand ExitCommand { get; set; }
 		public SpeechCommand SpeechCommand { get; set; }
+		public BeginEditCommand BeginEditCommand { get; set; }
+		public HasEditedCommand HasEditedCommand { get; set; }
+		public DeleteNotebookCommand DeleteNotebookCommand { get; set; }
 
 		public event PropertyChangedEventHandler? PropertyChanged;
 		public event EventHandler SelectedNoteChanged;
@@ -110,7 +120,9 @@ namespace EvernoteClone.ViewModel
 			NewNoteCommand = new NewNoteCommand(this);
 			ExitCommand = new ExitCommand(this);
 			SpeechCommand = new SpeechCommand(this);
-			
+			BeginEditCommand = new BeginEditCommand(this);
+			HasEditedCommand = new HasEditedCommand(this);
+			DeleteNotebookCommand = new DeleteNotebookCommand(this);
 		}
 
 		// This method is called from the SpeechCommand
@@ -241,11 +253,17 @@ namespace EvernoteClone.ViewModel
 			GetNotes(); // Refresh notes after adding a new one
 		}
 
-		public async void CreateNoteBook(int _userID)
+		public async void CreateNoteBook()
 		{
+			if(App.UserId == 0)
+			{
+				// Handle the case where UserId is not set
+				MessageBox.Show("User not logged in. Please log in to create a notebook.", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+				return;
+			}
 			Notebook newNotebook = new Notebook()
 			{
-				UserId = _userID,
+				UserId = App.UserId,
 				Name = "New Notebook",
 				CreatedAt = DateTime.Now,
 				UpdatedAt = DateTime.Now
@@ -267,6 +285,12 @@ namespace EvernoteClone.ViewModel
 			}
 		}
 
+		public async void DeleteNotebook(Notebook notebook)
+		{
+			await DatabaseHelper.Delete(notebook);
+			Notebooks.Remove(notebook);
+		}
+
 		private async void GetNotes()
 		{
 			Notes.Clear(); // Clear existing notes before loading new ones
@@ -281,6 +305,21 @@ namespace EvernoteClone.ViewModel
 				{
 					Notes.Add(note);
 				}
+			}
+		}
+
+		public void StartEditing()
+		{
+			IsEditing = true;
+		}
+
+		public async void HasRenamed(Notebook notebook)
+		{
+			if (notebook != null)
+			{
+				await DatabaseHelper.Update(notebook);
+				IsEditing = false;
+				GetNotebooks();
 			}
 		}
 
