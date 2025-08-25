@@ -1,6 +1,7 @@
 ﻿using EvernoteClone.ViewModel;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.IO;
 using System.Linq;
 using System.Text;
@@ -27,7 +28,9 @@ namespace EvernoteClone.View
 		{
 			InitializeComponent();
 			// Step 1: Create a SINGLE instance of the ViewModel
-			_viewModel = new NotesVM();
+			_viewModel = Resources["vm"] as NotesVM;
+			container.DataContext = _viewModel;
+			
 
 			// Step 2: Set the DataContext of the window to this instance
 			this.DataContext = _viewModel;
