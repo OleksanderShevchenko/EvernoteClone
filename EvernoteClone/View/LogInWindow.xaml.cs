@@ -1,4 +1,5 @@
-﻿using System;
+﻿using EvernoteClone.ViewModel;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -22,6 +23,27 @@ namespace EvernoteClone.View
 		public LogInWindow()
 		{
 			InitializeComponent();
+
+			LogInVM vm = new LogInVM();
+			containerGrid.DataContext = vm;
+			vm.HasLoggedIn += Vm_HasLoggedIn;
+		}
+
+		private void Vm_HasLoggedIn(object sender, EventArgs e)
+		{
+			this.Close();
+		}
+
+		private void haveAccountButton_Click(object sender, RoutedEventArgs e)
+		{
+			registerStackPanel.Visibility = Visibility.Collapsed;
+			loginStackPanel.Visibility = Visibility.Visible;
+		}
+
+		private void noAccountButton_Click(object sender, RoutedEventArgs e)
+		{
+			registerStackPanel.Visibility = Visibility.Visible;
+			loginStackPanel.Visibility = Visibility.Collapsed;
 		}
 	}
 }
