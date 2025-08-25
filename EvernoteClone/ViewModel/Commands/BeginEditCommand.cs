@@ -27,3 +27,4 @@ namespace EvernoteClone.ViewModel.Commands
 			Vm.StartEditing();
 		}
 	}
+}
