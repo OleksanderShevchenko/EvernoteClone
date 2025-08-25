@@ -17,6 +17,7 @@ namespace EvernoteClone.ViewModel.Helper
 		public static MobileServiceClient client = new MobileServiceClient(AppConfig.Instance.MobileClient);
 		private static string dbFile = Path.Combine(Environment.CurrentDirectory, dbName);
 		
+		public static string DBFile { get { return dbFile; } }
 		public static bool UseAzureDB
 		{
 			get
