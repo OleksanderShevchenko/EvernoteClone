@@ -102,7 +102,7 @@ namespace EvernoteClone.Core
 		{
 			public string dbName { get; set; }
 			public string mobileClient { get; set; }
-			public bool useAzureDB { get; set; } = true; // Default value if not specified
+			public bool useAzureDB { get; set; }
 		}
 	}
 }
