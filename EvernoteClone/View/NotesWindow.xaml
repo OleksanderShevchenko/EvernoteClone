@@ -37,10 +37,11 @@
             </StatusBarItem>
         </StatusBar>
         <ListView DockPanel.Dock="Left"
+                  Background="MidnightBlue"
                   x:Name="lstNotebooks"
                   Width="160"
                   ItemsSource="{Binding Notebooks}"
-                  SelectedValue="{Binding SelectedNotebook, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}">
+                  SelectedValue="{Binding SelectedNotebook, Mode=TwoWay}">
             <ListView.ItemTemplate>
                 <DataTemplate>
                     <Grid>
@@ -70,7 +71,7 @@
         <ListView DockPanel.Dock="Left"
                   x:Name="lstNotes"
                   ItemsSource="{Binding Notes}"
-                  SelectedValue="{Binding SelectedNote, Mode=TwoWay, UpdateSourceTrigger=SelectedNoteChanged}"
+                  SelectedValue="{Binding SelectedNote, Mode=TwoWay}"
                   Width="160">
             <ListView.ItemTemplate>
                 <DataTemplate>
