@@ -280,7 +280,8 @@ namespace EvernoteClone.ViewModel
 			{
 				foreach (var notebook in notebooks)
 				{
-					Notebooks.Add(notebook);
+					if (notebook.UserId == App.UserId) // Only add notebooks for the current user
+						Notebooks.Add(notebook);
 				}
 			}
 		}
