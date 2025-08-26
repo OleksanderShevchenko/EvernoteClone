@@ -12,7 +12,7 @@ namespace EvernoteClone.ViewModel
 {
 	public class LogInVM
 	{
-		private bool _isUseAzure = true;
+		private bool _isUseAzure = AppConfig.Instance.UseAzureDB;
 		private User _user;
 
 		public User User
