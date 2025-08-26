@@ -27,6 +27,13 @@ namespace EvernoteClone.View
 		public NotesWindow()
 		{
 			InitializeComponent();
+
+			if (App.UserId == 0)
+			{
+				LogInWindow loginWindow = new LogInWindow();
+				loginWindow.ShowDialog();
+			}
+
 			// Step 1: Create a SINGLE instance of the ViewModel
 			_viewModel = Resources["vm"] as NotesVM;
 			container.DataContext = _viewModel;
@@ -153,6 +160,12 @@ namespace EvernoteClone.View
 			}
 
 			_viewModel.UpdateSelectedNote();
+		}
+
+		protected override void OnActivated(EventArgs e)
+		{
+			base.OnActivated(e);
+
 		}
 	}
 }
